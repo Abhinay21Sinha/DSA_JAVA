@@ -38,10 +38,34 @@ public class Graph {
            }
        }
     }
+    public void DFS_traversal(int source,boolean[] visited){
+        //System.out.println(source);
+        visited[source]=true;
+        Stack<Integer> s=new Stack<>();
+        s.push(source);
+       /* SinglyLinkedList s=h.get(source);
+        NodeS temp=s.head;
+        while(temp!=null){
+            if(!visited[temp.data])
+                DFS_traversal(temp.data,visited);
+            temp=temp.next;
+        }*/
+        while(!s.isEmpty()){
+            int top=s.pop();
+            System.out.println(top);
+            NodeS temp=h.get(top).head;
+            while(temp!=null){
+                if(!visited[temp.data]){
+                    s.push(temp.data);
+                    visited[temp.data]=true;
+                }
+                temp=temp.next;
+            }
+        }
+    }
     public Map<Integer,Integer> SSSP(int source){
        Queuebylinkedlist q=new Queuebylinkedlist();
-       q.enqueue(source);
-        Set<Integer> s=new HashSet<>();
+        q.enqueue(source);
         Map<Integer,Integer> m=new HashMap<>();
         for(int res:h.keySet())
             m.put(res,Integer.MAX_VALUE);
@@ -50,29 +74,35 @@ public class Graph {
             int front=q.dequeue();
             SinglyLinkedList l=h.get(front);
             NodeS temp=l.head;
-            int i=1;
             while(temp!=null){
                 if(m.get(temp.data)==Integer.MAX_VALUE)
-                    m.put(temp.data,i);
+                {   //s.add(temp.data);
+                    m.put(temp.data,m.get(front)+1);
+                    q.enqueue(temp.data);
+                }
                 temp=temp.next;
             }
-            i++;
         }
         return m;
     }
 
+
     public static void main(String[] args) {
         Graph g=new Graph();
-        g.insert(1,2,true);
-        g.insert(1,3,true);
-        g.insert(2,4,true);
+        g.insert(0,1,true);
+        g.insert(0,2,true);
+        g.insert(1,4,true);
+        g.insert(2,3,true);
         g.insert(3,4,true);
-        g.insert(3,5,true);
-        g.insert(5,6,true);
-        g.BFS_traversal(2);
-        for(Map.Entry<Integer,Integer> k:g.SSSP(1).entrySet()){
-            System.out.println(k.getKey()+" "+k.getValue());
+        g.insert(2,4,true);
+       // g.BFS_traversal(2);
+         boolean[] arr={false,false,false,false,false,false,false,false,false};
+       g.DFS_traversal(2,arr);
+
+        for(Map.Entry<Integer,Integer> h:g.SSSP(1).entrySet()){
+           // System.out.println(h.getKey()+" "+h.getValue());
         }
+
     }
 }
 /*
@@ -85,6 +115,15 @@ BFS uses queue data structure and DFS uses Stack data structure
 SSSP(Single source shortest path)
 
 1.BFS
-2.Belman ford algorithm
+2.Bellman ford algorithm
 3.Dijikstra Algorithm
+
+
+weighted graph does not work with BFS for single source shortest path
+Dijkstra algo doesn't recognize negative cycles that is why bellman ford algo
+
+
+To get MST(minimum spanning tree)
+Crystal algorithm
+Prim's algorithm
 */
